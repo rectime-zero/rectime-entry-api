@@ -7,7 +7,13 @@ dist/
 .vscode/*
 !.vscode/launch.json
 !.vscode/*.code-snippets
-.idea/
+.idea/*
+!.idea/.gitignore
+!.idea/misc.xml
+!.idea/modules.xml
+!.idea/vcs.xml
+!.idea/runConfigurations/
+!.idea/runConfigurations/*.xml
 
 # deps
 node_modules/

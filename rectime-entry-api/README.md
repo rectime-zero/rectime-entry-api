@@ -42,6 +42,8 @@ POST /v1/resolve
 npm run dev
 ```
 
+IntelliJ IDEA では共有 Run Configuration `rectime-entry-api dev` を追加済みです。右上の実行ボタンからそのまま `npm run dev` を起動できます。
+
 ## デプロイ
 
 ```txt
