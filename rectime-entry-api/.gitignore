@@ -1,4 +1,4 @@
-# prod
+﻿# prod
 dist/
 
 # dev
@@ -7,13 +7,7 @@ dist/
 .vscode/*
 !.vscode/launch.json
 !.vscode/*.code-snippets
-.idea/*
-!.idea/.gitignore
-!.idea/misc.xml
-!.idea/modules.xml
-!.idea/vcs.xml
-!.idea/runConfigurations/
-!.idea/runConfigurations/*.xml
+.idea/
 
 # deps
 node_modules/
