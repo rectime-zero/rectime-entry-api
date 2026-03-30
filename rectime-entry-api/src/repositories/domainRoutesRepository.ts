@@ -1,7 +1,7 @@
-﻿import type { D1DatabaseLike } from '../types/env'
+import type { D1DatabaseLike } from '../types/env'
 
 type DomainRouteRow = {
-  event_id: string
+  event_id: number | string
 }
 
 export class DomainRoutesRepository {
@@ -14,12 +14,12 @@ export class DomainRoutesRepository {
          FROM domain_routes
          WHERE email_domain = ?
            AND is_active = 1
-         ORDER BY priority ASC, id ASC
+         ORDER BY sort_order ASC, id ASC
          LIMIT 1`,
       )
       .bind(emailDomain)
       .first<DomainRouteRow>()
 
-    return row ? { eventId: row.event_id } : null
+    return row ? { eventId: String(row.event_id) } : null
   }
 }

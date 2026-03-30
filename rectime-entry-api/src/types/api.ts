@@ -1,6 +1,12 @@
-﻿export type ResolveRequestBody = {
+export type ClientPlatform = 'ios' | 'android' | 'web'
+
+export type ResolveRequestBody = {
   appVersion: string
-  platform: 'ios' | 'android'
+  platform: ClientPlatform
+}
+
+export type ResolveByEmailRequestBody = ResolveRequestBody & {
+  email: string
 }
 
 export type ErrorCode =

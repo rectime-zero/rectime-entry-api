@@ -1,21 +1,19 @@
-﻿import type { D1DatabaseLike } from '../types/env'
+import type { D1DatabaseLike } from '../types/env'
 
 type EventRow = {
-  id: string
+  id: number | string
   name: string
   backend_url: string
-  status: string
+  is_active: number
   created_at: string
-  updated_at: string
 }
 
 export type EventRecord = {
   id: string
   name: string
   backendUrl: string
-  status: string
+  isActive: boolean
   createdAt: string
-  updatedAt: string
 }
 
 export class EventsRepository {
@@ -24,7 +22,7 @@ export class EventsRepository {
   async findById(id: string): Promise<EventRecord | null> {
     const row = await this.db
       .prepare(
-        `SELECT id, name, backend_url, status, created_at, updated_at
+        `SELECT id, name, backend_url, is_active, created_at
          FROM events
          WHERE id = ?`,
       )
@@ -36,12 +34,11 @@ export class EventsRepository {
     }
 
     return {
-      id: row.id,
+      id: String(row.id),
       name: row.name,
       backendUrl: row.backend_url,
-      status: row.status,
+      isActive: row.is_active === 1,
       createdAt: row.created_at,
-      updatedAt: row.updated_at,
     }
   }
 }

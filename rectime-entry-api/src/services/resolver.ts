@@ -1,4 +1,4 @@
-﻿import { DomainRoutesRepository } from '../repositories/domainRoutesRepository'
+import { DomainRoutesRepository } from '../repositories/domainRoutesRepository'
 import { EmailExceptionsRepository } from '../repositories/emailExceptionsRepository'
 import { EventsRepository, type EventRecord } from '../repositories/eventsRepository'
 import { AppError } from '../types/api'
@@ -18,7 +18,14 @@ export async function resolveEventForUser(
     throw new AppError(403, 'EMAIL_NOT_VERIFIED', 'メールアドレスの確認が完了していません')
   }
 
-  const normalizedEmail = user.email.trim().toLowerCase()
+  return resolveEventForEmail(db, user.email)
+}
+
+export async function resolveEventForEmail(
+  db: D1DatabaseLike,
+  email: string,
+): Promise<ResolveResult> {
+  const normalizedEmail = normalizeEmail(email)
   const emailDomain = extractEmailDomain(normalizedEmail)
 
   const emailExceptionsRepository = new EmailExceptionsRepository(db)
@@ -55,11 +62,20 @@ async function getActiveEvent(
     throw new AppError(404, 'EVENT_NOT_FOUND', '接続先イベントが見つかりません')
   }
 
-  if (event.status !== 'active') {
+  if (!event.isActive) {
     throw new AppError(409, 'EVENT_INACTIVE', '接続先イベントは停止中です')
   }
 
   return event
+}
+
+function normalizeEmail(email: string): string {
+  const normalizedEmail = email.trim().toLowerCase()
+  if (normalizedEmail.length === 0) {
+    throw new AppError(403, 'FORBIDDEN_EMAIL', 'このアカウントは利用対象外です')
+  }
+
+  return normalizedEmail
 }
 
 function extractEmailDomain(email: string): string {

@@ -1,4 +1,4 @@
-﻿import { Hono } from 'hono'
+import { Hono } from 'hono'
 import { swaggerUI } from '@hono/swagger-ui'
 
 import type { AppBindings } from '../types/env'
@@ -35,7 +35,18 @@ const endpoints = [
     description: '認証済みユーザーの接続先イベントを解決します。',
     requestBody: {
       appVersion: '1.0.0',
-      platform: 'ios | android',
+      platform: 'ios | android | web',
+    },
+  },
+  {
+    method: 'POST',
+    path: '/v1/resolve-email',
+    auth: 'none',
+    description: 'メールアドレスから接続先イベントを解決します。',
+    requestBody: {
+      email: 'user@example.com',
+      appVersion: '1.0.0',
+      platform: 'ios | android | web',
     },
   },
 ] as const
@@ -81,8 +92,28 @@ const openApiDocument = {
           },
           platform: {
             type: 'string',
-            enum: ['ios', 'android'],
+            enum: ['ios', 'android', 'web'],
             example: 'ios',
+          },
+        },
+      },
+      ResolveByEmailRequest: {
+        type: 'object',
+        required: ['email', 'appVersion', 'platform'],
+        properties: {
+          email: {
+            type: 'string',
+            format: 'email',
+            example: 'user@example.com',
+          },
+          appVersion: {
+            type: 'string',
+            example: '1.0.0',
+          },
+          platform: {
+            type: 'string',
+            enum: ['ios', 'android', 'web'],
+            example: 'web',
           },
         },
       },
@@ -92,7 +123,7 @@ const openApiDocument = {
         properties: {
           eventId: {
             type: 'string',
-            example: 'hal-nagoya-2026',
+            example: '1',
           },
           apiBaseUrl: {
             type: 'string',
@@ -106,6 +137,21 @@ const openApiDocument = {
           expiresIn: {
             type: 'integer',
             example: 300,
+          },
+        },
+      },
+      ResolveByEmailResponse: {
+        type: 'object',
+        required: ['eventId', 'apiBaseUrl'],
+        properties: {
+          eventId: {
+            type: 'string',
+            example: '1',
+          },
+          apiBaseUrl: {
+            type: 'string',
+            format: 'uri',
+            example: 'https://hal-nagoya-2026.example.com',
           },
         },
       },
@@ -250,6 +296,84 @@ const openApiDocument = {
           },
           '403': {
             description: '利用対象外またはメール未確認',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/ErrorResponse',
+                },
+              },
+            },
+          },
+          '404': {
+            description: '接続先なし',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/ErrorResponse',
+                },
+              },
+            },
+          },
+          '409': {
+            description: 'イベント停止中',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/ErrorResponse',
+                },
+              },
+            },
+          },
+          '500': {
+            description: '内部エラー',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/ErrorResponse',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/v1/resolve-email': {
+      post: {
+        tags: ['resolve'],
+        summary: 'メールアドレスによる接続先イベント解決',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/components/schemas/ResolveByEmailRequest',
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: '解決成功',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/ResolveByEmailResponse',
+                },
+              },
+            },
+          },
+          '400': {
+            description: '不正なリクエスト',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/ErrorResponse',
+                },
+              },
+            },
+          },
+          '403': {
+            description: '利用対象外',
             content: {
               'application/json': {
                 schema: {

@@ -1,4 +1,5 @@
-﻿import type { D1DatabaseLike } from '../types/env'
+import type { ClientPlatform } from '../types/api'
+import type { D1DatabaseLike } from '../types/env'
 import { nowIsoString } from '../utils/time'
 
 type InsertResolveLogParams = {
@@ -8,7 +9,7 @@ type InsertResolveLogParams = {
   result: 'success' | 'not_found' | 'rejected'
   reasonCode: string
   appVersion: string
-  platform: 'ios' | 'android'
+  platform: ClientPlatform
 }
 
 export class ResolveLogsRepository {

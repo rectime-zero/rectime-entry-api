@@ -1,8 +1,7 @@
-﻿import type { D1DatabaseLike } from '../types/env'
-import { nowIsoString } from '../utils/time'
+import type { D1DatabaseLike } from '../types/env'
 
 type EmailExceptionRow = {
-  event_id: string
+  event_id: number | string
 }
 
 export class EmailExceptionsRepository {
@@ -15,13 +14,12 @@ export class EmailExceptionsRepository {
          FROM email_exceptions
          WHERE email = ?
            AND is_active = 1
-           AND (expires_at IS NULL OR expires_at > ?)
-         ORDER BY id ASC
+         ORDER BY sort_order ASC, id ASC
          LIMIT 1`,
       )
-      .bind(email, nowIsoString())
+      .bind(email)
       .first<EmailExceptionRow>()
 
-    return row ? { eventId: row.event_id } : null
+    return row ? { eventId: String(row.event_id) } : null
   }
 }
