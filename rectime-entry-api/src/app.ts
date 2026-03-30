@@ -1,8 +1,7 @@
-﻿import { Hono } from 'hono'
+import { Hono } from 'hono'
 
 import { errorHandler } from './middleware/errorHandler'
 import { requestId } from './middleware/requestId'
-import { docsRoute } from './routes/docs'
 import { healthRoute } from './routes/health'
 import { resolveRoute } from './routes/resolve'
 import type { AppBindings } from './types/env'
@@ -13,7 +12,6 @@ export function createApp() {
   app.use('*', requestId)
   app.onError(errorHandler)
 
-  app.route('/', docsRoute)
   app.route('/', healthRoute)
   app.route('/', resolveRoute)
 
