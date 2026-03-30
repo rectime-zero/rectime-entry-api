@@ -1,14 +1,14 @@
-ï»¿# rectime-entry-api
+# rectime-entry-api
 
-èªè¨¼æ¸ˆã¿ãƒ¦ãƒ¼ã‚¶ãƒ¼ã®ãƒ¡ãƒ¼ãƒ«ã‚¢ãƒ‰ãƒ¬ã‚¹ã¨ãƒˆãƒ¼ã‚¯ãƒ³æƒ…å ±ã‚’ã‚‚ã¨ã«ã€æ¥ç¶šå…ˆã‚¤ãƒ™ãƒ³ãƒˆ API ã‚’è§£æ±ºã™ã‚‹å…¥å£ API ã§ã™ã€‚Cloudflare Workers ä¸Šã§å‹•ä½œã™ã‚‹ HTTP API ã¨ã—ã¦å…¬é–‹ã—ã¾ã™ã€‚
+”FØÏ‚İƒ†[ƒU[‚Ìƒ[ƒ‹ƒAƒhƒŒƒX‚Æƒg[ƒNƒ“î•ñ‚ğ‚à‚Æ‚ÉAÚ‘±æƒCƒxƒ“ƒg API ‚ğ‰ğŒˆ‚·‚é“üŒû API ‚Å‚·BCloudflare Workers ã‚Å“®ì‚·‚é HTTP API ‚Æ‚µ‚ÄŒöŠJ‚µ‚Ü‚·B
 
-## ç‰¹å¾´
+## “Á’¥
 
-- èªè¨¼æ¸ˆã¿ Firebase ãƒ¦ãƒ¼ã‚¶ãƒ¼ã‹ã‚‰æ¥ç¶šå…ˆã‚¤ãƒ™ãƒ³ãƒˆã‚’è§£æ±ºã™ã‚‹
-- D1 ã«ç™»éŒ²ã•ã‚ŒãŸã‚¤ãƒ™ãƒ³ãƒˆé–¢é€£ãƒ‡ãƒ¼ã‚¿ã‚’å‚ç…§ã™ã‚‹
-- Cloudflare Workers ä¸Šã§è»½é‡ã«å‹•ä½œã™ã‚‹
+- ”FØÏ‚İ Firebase ƒ†[ƒU[‚©‚çÚ‘±æƒCƒxƒ“ƒg‚ğ‰ğŒˆ‚·‚é
+- D1 ‚Ì `events` `domain_routes` `email_exceptions` ‚ğQÆ‚·‚é
+- Cloudflare Workers ã‚ÅŒy—Ê‚É“®ì‚·‚é
 
-## æŠ€è¡“ã‚¹ã‚¿ãƒƒã‚¯
+## ‹ZpƒXƒ^ƒbƒN
 
 - Runtime: Cloudflare Workers
 - Web Framework: Hono
@@ -16,7 +16,7 @@
 - Language: TypeScript
 - CI/CD: GitHub Actions
 
-## ã‚¨ãƒ³ãƒ‰ãƒã‚¤ãƒ³ãƒˆ
+## ƒGƒ“ƒhƒ|ƒCƒ“ƒg
 
 ```txt
 GET  /health
@@ -24,11 +24,15 @@ POST /v1/resolve
 POST /v1/resolve-email
 ```
 
-## ã‚»ãƒƒãƒˆã‚¢ãƒƒãƒ—ã¨ãƒ‡ãƒ—ãƒ­ã‚¤
+## DB ƒXƒL[ƒ}
 
-ã‚»ãƒƒãƒˆã‚¢ãƒƒãƒ—ã€ãƒ­ãƒ¼ã‚«ãƒ«é–‹ç™ºã€GitHub Actions ãƒ‡ãƒ—ãƒ­ã‚¤æ‰‹é †ã¯ [SETUP.md](/K:/GitHub-Project/rectime-zero/rectime-entry-api/rectime-entry-api/SETUP.md) ã‚’å‚ç…§ã—ã¦ãã ã•ã„ã€‚
+ƒ[ƒJƒ‹\’z‚Æ–{”Ô“Š“ü‚Åg‚¤Šî€ƒXƒL[ƒ}‚Í `schema.sql` ‚Å‚·BƒAƒvƒŠƒP[ƒVƒ‡ƒ“À‘•‚à‚±‚Ì 3 ƒe[ƒuƒ‹‘O’ñ‚Å‚·B
 
-## ã‚¹ã‚¯ãƒªãƒ—ãƒˆ
+## ƒZƒbƒgƒAƒbƒv‚ÆƒfƒvƒƒC
+
+ƒZƒbƒgƒAƒbƒvAƒ[ƒJƒ‹ŠJ”­AGitHub Actions ƒfƒvƒƒCè‡‚Í [SETUP.md](/K:/GitHub-Project/rectime-zero/rectime-entry-api/rectime-entry-api/SETUP.md) ‚ğQÆ‚µ‚Ä‚­‚¾‚³‚¢B
+
+## ƒXƒNƒŠƒvƒg
 
 ```txt
 npm run dev

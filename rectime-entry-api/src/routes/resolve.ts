@@ -2,12 +2,10 @@ import { Hono } from 'hono'
 
 import { AppError, type ResolveByEmailRequestBody, type ResolveRequestBody } from '../types/api'
 import type { AppBindings } from '../types/env'
-import { ResolveLogsRepository } from '../repositories/resolveLogsRepository'
 import { verifyFirebaseIdToken, type VerifiedFirebaseToken } from '../services/firebase'
 import { resolveEventForEmail, resolveEventForUser } from '../services/resolver'
 import { issueEntryToken, ENTRY_TOKEN_TTL_SECONDS } from '../services/token'
 import { assertDatabaseEnv, assertRuntimeEnv } from '../utils/env'
-import { hashEmail } from '../utils/hash'
 import { parseAuthorizationBearerToken } from '../utils/http'
 
 export const resolveRoute = new Hono<AppBindings>()
@@ -17,60 +15,26 @@ resolveRoute.post('/v1/resolve', async (c) => {
 
   const bearerToken = parseAuthorizationBearerToken(c.req.header('Authorization'))
   if (!bearerToken) {
-    throw new AppError(401, 'UNAUTHORIZED', '認証トークンが不正です')
+    throw new AppError(401, 'UNAUTHORIZED', '認証ト�Eクンが不正でぁE')
   }
 
-  const body = await parseResolveBody(c.req.raw)
-  const logsRepository = new ResolveLogsRepository(c.env.DB)
+  await parseResolveBody(c.req.raw)
 
-  let verifiedToken: VerifiedFirebaseToken | null = null
+  const verifiedToken: VerifiedFirebaseToken = await verifyFirebaseIdToken(bearerToken, c.env)
+  const resolution = await resolveEventForUser(c.env.DB, verifiedToken)
+  const entryToken = await issueEntryToken({
+    env: c.env,
+    eventId: resolution.event.id,
+    uid: verifiedToken.uid,
+    email: verifiedToken.email,
+  })
 
-  try {
-    verifiedToken = await verifyFirebaseIdToken(bearerToken, c.env)
-    const resolution = await resolveEventForUser(c.env.DB, verifiedToken)
-    const entryToken = await issueEntryToken({
-      env: c.env,
-      eventId: resolution.event.id,
-      uid: verifiedToken.uid,
-      email: verifiedToken.email,
-    })
-
-    await logsRepository.insert({
-      firebaseUid: verifiedToken.uid,
-      emailHash: await hashEmail(verifiedToken.email),
-      resolvedEventId: resolution.event.id,
-      result: 'success',
-      reasonCode: resolution.reasonCode,
-      appVersion: body.appVersion,
-      platform: body.platform,
-    })
-
-    return c.json({
-      eventId: resolution.event.id,
-      apiBaseUrl: resolution.event.backendUrl,
-      entryToken,
-      expiresIn: ENTRY_TOKEN_TTL_SECONDS,
-    })
-  } catch (error) {
-    if (verifiedToken) {
-      const appError =
-        error instanceof AppError
-          ? error
-          : new AppError(500, 'INTERNAL_ERROR', '想定外エラーが発生しました')
-
-      await logsRepository.insert({
-        firebaseUid: verifiedToken.uid,
-        emailHash: await hashEmail(verifiedToken.email),
-        resolvedEventId: null,
-        result: appError.code === 'EVENT_NOT_FOUND' ? 'not_found' : 'rejected',
-        reasonCode: appError.code,
-        appVersion: body.appVersion,
-        platform: body.platform,
-      })
-    }
-
-    throw error
-  }
+  return c.json({
+    eventId: resolution.event.id,
+    apiBaseUrl: resolution.event.backendUrl,
+    entryToken,
+    expiresIn: ENTRY_TOKEN_TTL_SECONDS,
+  })
 })
 
 resolveRoute.post('/v1/resolve-email', async (c) => {
@@ -91,20 +55,20 @@ async function parseResolveBody(request: Request): Promise<ResolveRequestBody> {
   try {
     json = await request.json()
   } catch {
-    throw new AppError(400, 'BAD_REQUEST', 'リクエストボディが不正です')
+    throw new AppError(400, 'BAD_REQUEST', 'リクエスト�EチE��が不正でぁE')
   }
 
   if (!json || typeof json !== 'object') {
-    throw new AppError(400, 'BAD_REQUEST', 'リクエストボディが不正です')
+    throw new AppError(400, 'BAD_REQUEST', 'リクエスト�EチE��が不正でぁE')
   }
 
   const { appVersion, platform } = json as Record<string, unknown>
   if (typeof appVersion !== 'string' || appVersion.length === 0) {
-    throw new AppError(400, 'BAD_REQUEST', 'appVersion が不正です')
+    throw new AppError(400, 'BAD_REQUEST', 'appVersion が不正でぁE')
   }
 
   if (platform !== 'ios' && platform !== 'android' && platform !== 'web') {
-    throw new AppError(400, 'BAD_REQUEST', 'platform が不正です')
+    throw new AppError(400, 'BAD_REQUEST', 'platform が不正でぁE')
   }
 
   return { appVersion, platform }
@@ -116,29 +80,19 @@ async function parseResolveByEmailBody(request: Request): Promise<ResolveByEmail
   try {
     json = await request.json()
   } catch {
-    throw new AppError(400, 'BAD_REQUEST', 'リクエストボディが不正です')
+    throw new AppError(400, 'BAD_REQUEST', 'リクエスト�EチE��が不正でぁE')
   }
 
   if (!json || typeof json !== 'object') {
-    throw new AppError(400, 'BAD_REQUEST', 'リクエストボディが不正です')
+    throw new AppError(400, 'BAD_REQUEST', 'リクエスト�EチE��が不正でぁE')
   }
 
-  const { email, appVersion, platform } = json as Record<string, unknown>
+  const { email } = json as Record<string, unknown>
   if (typeof email !== 'string' || email.trim().length === 0) {
-    throw new AppError(400, 'BAD_REQUEST', 'email が不正です')
-  }
-
-  if (typeof appVersion !== 'string' || appVersion.length === 0) {
-    throw new AppError(400, 'BAD_REQUEST', 'appVersion が不正です')
-  }
-
-  if (platform !== 'ios' && platform !== 'android' && platform !== 'web') {
-    throw new AppError(400, 'BAD_REQUEST', 'platform が不正です')
+    throw new AppError(400, 'BAD_REQUEST', 'email が不正でぁE')
   }
 
   return {
     email,
-    appVersion,
-    platform,
   }
 }

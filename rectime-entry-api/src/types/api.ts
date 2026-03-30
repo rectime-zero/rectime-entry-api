@@ -5,7 +5,7 @@ export type ResolveRequestBody = {
   platform: ClientPlatform
 }
 
-export type ResolveByEmailRequestBody = ResolveRequestBody & {
+export type ResolveByEmailRequestBody = {
   email: string
 }
 
