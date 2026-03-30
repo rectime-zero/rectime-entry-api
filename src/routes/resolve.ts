@@ -15,7 +15,7 @@ resolveRoute.post('/v1/resolve', async (c) => {
 
   const bearerToken = parseAuthorizationBearerToken(c.req.header('Authorization'))
   if (!bearerToken) {
-    throw new AppError(401, 'UNAUTHORIZED', '認証ト�Eクンが不正でぁE')
+    throw new AppError(401, 'UNAUTHORIZED', '認証トークンが不正です')
   }
 
   await parseResolveBody(c.req.raw)
@@ -55,20 +55,20 @@ async function parseResolveBody(request: Request): Promise<ResolveRequestBody> {
   try {
     json = await request.json()
   } catch {
-    throw new AppError(400, 'BAD_REQUEST', 'リクエスト�EチE��が不正でぁE')
+    throw new AppError(400, 'BAD_REQUEST', 'リクエストボディが不正です')
   }
 
   if (!json || typeof json !== 'object') {
-    throw new AppError(400, 'BAD_REQUEST', 'リクエスト�EチE��が不正でぁE')
+    throw new AppError(400, 'BAD_REQUEST', 'リクエストボディが不正です')
   }
 
   const { appVersion, platform } = json as Record<string, unknown>
   if (typeof appVersion !== 'string' || appVersion.length === 0) {
-    throw new AppError(400, 'BAD_REQUEST', 'appVersion が不正でぁE')
+    throw new AppError(400, 'BAD_REQUEST', 'appVersion が不正です')
   }
 
   if (platform !== 'ios' && platform !== 'android' && platform !== 'web') {
-    throw new AppError(400, 'BAD_REQUEST', 'platform が不正でぁE')
+    throw new AppError(400, 'BAD_REQUEST', 'platform が不正です')
   }
 
   return { appVersion, platform }
@@ -80,16 +80,16 @@ async function parseResolveByEmailBody(request: Request): Promise<ResolveByEmail
   try {
     json = await request.json()
   } catch {
-    throw new AppError(400, 'BAD_REQUEST', 'リクエスト�EチE��が不正でぁE')
+    throw new AppError(400, 'BAD_REQUEST', 'リクエストボディが不正です')
   }
 
   if (!json || typeof json !== 'object') {
-    throw new AppError(400, 'BAD_REQUEST', 'リクエスト�EチE��が不正でぁE')
+    throw new AppError(400, 'BAD_REQUEST', 'リクエストボディが不正です')
   }
 
   const { email } = json as Record<string, unknown>
   if (typeof email !== 'string' || email.trim().length === 0) {
-    throw new AppError(400, 'BAD_REQUEST', 'email が不正でぁE')
+    throw new AppError(400, 'BAD_REQUEST', 'email が不正です')
   }
 
   return {
