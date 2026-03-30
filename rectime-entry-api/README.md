@@ -1,30 +1,24 @@
-﻿# rectime-entry-api
+# rectime-entry-api
 
-Cloudflare Workers + Hono + D1 で動く、認証済みメールアドレスから接続先イベント API を解決する入口 API です。
+接続元ユーザーを認証し、そのメールアドレスやトークン情報をもとに接続先イベントを解決する入口 API です。Cloudflare Workers 上で動作し、HTTP API と Swagger UI を提供します。
 
-## セットアップ
+## 役割
 
-```txt
-npm install
-```
+- 認証済みリクエストから接続先イベントを解決する
+- D1 に保存されたイベント関連データを参照する
+- OpenAPI と Swagger UI を提供する
+- Cloudflare Workers 上で軽量に動作する API として公開する
 
-`wrangler.jsonc` に `FIREBASE_PROJECT_ID` を設定し、D1 バインディング `DB` を追加します。秘密情報は `wrangler secret put`、ローカル開発では `.dev.vars` で渡します。
+## 技術スタック
 
-```txt
-wrangler secret put FIREBASE_CLIENT_EMAIL
-wrangler secret put FIREBASE_PRIVATE_KEY
-wrangler secret put ENTRY_TOKEN_SECRET
-```
+- Runtime: Cloudflare Workers
+- Web Framework: Hono
+- Database: Cloudflare D1
+- API Docs: OpenAPI, Swagger UI
+- Language: TypeScript
+- CI/CD: GitHub Actions
 
-`.dev.vars.example` をコピーして `.dev.vars` を作るとローカル確認しやすいです。
-
-## D1 スキーマ
-
-```txt
-wrangler d1 execute <DB_NAME> --file migrations/0001_initial.sql
-```
-
-## エンドポイント一覧
+## エンドポイント
 
 ```txt
 GET  /
@@ -34,18 +28,15 @@ GET  /health
 POST /v1/resolve
 ```
 
-`/docs` は Swagger UI、`/openapi.json` は OpenAPI 定義です。
+## 開発とデプロイ
 
-## ローカル開発
+セットアップ、ローカル開発、GitHub Actions デプロイ手順は [SETUP.md](/K:/GitHub-Project/rectime-zero/rectime-entry-api/rectime-entry-api/SETUP.md) を参照してください。
+
+## スクリプト
 
 ```txt
 npm run dev
-```
-
-IntelliJ IDEA では共有 Run Configuration `rectime-entry-api dev` を追加済みです。右上の実行ボタンからそのまま `npm run dev` を起動できます。
-
-## デプロイ
-
-```txt
+npm run generate:wrangler-toml
 npm run deploy
+npm run cf-typegen
 ```
