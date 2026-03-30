@@ -49,7 +49,7 @@ export async function verifyFirebaseIdToken(token: string, env: Env): Promise<Ve
     throw new AppError(401, 'UNAUTHORIZED', '認証トークンが不正です')
   }
 
-  const signingInput = new TextEncoder().encode(`${encodedHeader}.${encodedPayload}`)
+  const signingInput = encodeUtf8(`${encodedHeader}.${encodedPayload}`)
   const signature = decodeBase64Url(encodedSignature)
   const publicKey = await getFirebasePublicKey(header.kid)
   const isValid = await crypto.subtle.verify(
@@ -167,9 +167,23 @@ function parseJwtPart<T>(value: string): T {
   }
 }
 
-function decodeBase64Url(value: string): Uint8Array {
+function encodeUtf8(value: string): ArrayBuffer {
+  const bytes = new TextEncoder().encode(value)
+  const buffer = new ArrayBuffer(bytes.length)
+  new Uint8Array(buffer).set(bytes)
+  return buffer
+}
+
+function decodeBase64Url(value: string): ArrayBuffer {
   const normalized = value.replace(/-/g, '+').replace(/_/g, '/')
   const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=')
   const binary = atob(padded)
-  return Uint8Array.from(binary, (char) => char.charCodeAt(0))
+  const buffer = new ArrayBuffer(binary.length)
+  const bytes = new Uint8Array(buffer)
+
+  for (let i = 0; i < binary.length; i += 1) {
+    bytes[i] = binary.charCodeAt(i)
+  }
+
+  return buffer
 }

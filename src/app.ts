@@ -16,13 +16,7 @@ export function createApp() {
   app.route('/', resolveRoute)
 
   app.notFound((c) => {
-    return c.json(
-      {
-        code: 'NOT_FOUND',
-        message: 'リソースが見つかりません',
-      },
-      404,
-    )
+    return c.body(null, 404)
   })
 
   return app
