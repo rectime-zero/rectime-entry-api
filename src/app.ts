@@ -1,4 +1,5 @@
 import { Hono } from 'hono'
+import { cors } from 'hono/cors'
 
 import { errorHandler } from './middleware/errorHandler'
 import { requestId } from './middleware/requestId'
@@ -9,6 +10,15 @@ import type { AppBindings } from './types/env'
 export function createApp() {
   const app = new Hono<AppBindings>()
 
+  app.use(
+    '*',
+    cors({
+      origin: (origin, c) => c.env.CORS_ALLOWED_ORIGIN || origin || '*',
+      allowHeaders: ['Authorization', 'Content-Type'],
+      allowMethods: ['GET', 'POST', 'OPTIONS'],
+      credentials: false,
+    }),
+  )
   app.use('*', requestId)
   app.onError(errorHandler)
 

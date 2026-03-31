@@ -15,6 +15,7 @@ export type Env = {
   FIREBASE_CLIENT_EMAIL?: string
   FIREBASE_PRIVATE_KEY?: string
   ENTRY_TOKEN_SECRET: string
+  CORS_ALLOWED_ORIGIN?: string
 }
 
 export type AppBindings = {

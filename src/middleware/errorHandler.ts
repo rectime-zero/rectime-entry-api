@@ -10,7 +10,7 @@ export const errorHandler: ErrorHandler<AppBindings> = (error, c) => {
         code: error.code,
         message: error.message,
       },
-      error.status,
+      error.status as 400 | 401 | 403 | 404 | 409 | 500,
     )
   }
 

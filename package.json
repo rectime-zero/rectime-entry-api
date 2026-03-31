@@ -3,6 +3,8 @@
   "type": "module",
   "scripts": {
     "dev": "npm run generate:wrangler-toml && wrangler dev --config wrangler.toml",
+    "db:init:local": "npm run generate:wrangler-toml && wrangler d1 execute rectime-entry-api-local --local --config wrangler.toml --file migrations/0001_initial.sql",
+    "dev:local": "npm run db:init:local && wrangler dev --config wrangler.toml",
     "generate:wrangler-toml": "node ./scripts/generate-wrangler-toml.mjs",
     "deploy": "wrangler deploy --minify",
     "cf-typegen": "wrangler types --env-interface CloudflareBindings"
