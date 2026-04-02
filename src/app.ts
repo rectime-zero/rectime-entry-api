@@ -13,7 +13,7 @@ export function createApp() {
   app.use(
     '*',
     cors({
-      origin: (origin, c) => c.env.CORS_ALLOWED_ORIGIN || origin || '*',
+      origin: (origin, c) => resolveCorsOrigin(origin, c.env.CORS_ALLOWED_ORIGIN),
       allowHeaders: ['Authorization', 'Content-Type'],
       allowMethods: ['GET', 'POST', 'OPTIONS'],
       credentials: false,
@@ -30,4 +30,21 @@ export function createApp() {
   })
 
   return app
+}
+
+function resolveCorsOrigin(requestOrigin: string | undefined, allowedOriginEnv: string | undefined) {
+  if (!allowedOriginEnv) {
+    return requestOrigin || '*'
+  }
+
+  const allowedOrigins = allowedOriginEnv
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter((origin) => origin.length > 0)
+
+  if (!requestOrigin) {
+    return allowedOrigins[0] || '*'
+  }
+
+  return allowedOrigins.includes(requestOrigin) ? requestOrigin : allowedOrigins[0] || '*'
 }
